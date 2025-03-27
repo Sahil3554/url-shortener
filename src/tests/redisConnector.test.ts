@@ -38,7 +38,7 @@ describe("RedisConnector", () => {
     it("should setup event listeners on connect", () => {
         redisConnector = new RedisConnector(Config, true);
         const mockRedis = redisConnector.getRedis();
-
+        redisConnector.connect();
         expect(mockRedis.on).toHaveBeenCalledWith("connect", expect.any(Function));
         expect(mockRedis.on).toHaveBeenCalledWith("error", expect.any(Function));
     });

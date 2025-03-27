@@ -26,7 +26,15 @@ describe("URL Shortener API", () => {
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty("shortUrl");
     });
+    it("should give error when URL is not provided", async () => {
+        const response = await request(server)
+            .post("/api/url/shorten")
+            .send({});
 
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty("error");
+        expect(response.body.error).toBe("URL is required");
+    });
     it("should redirect to the original URL", async () => {
         const shortenResponse = await request(server)
             .post("/api/url/shorten")
@@ -37,5 +45,18 @@ describe("URL Shortener API", () => {
         const redirectResponse = await request(server).get(`/api/url/${shortId}`);
 
         expect(redirectResponse.status).toBe(302);
+    });
+    it("should give error for invalid short url", async () => {
+        const shortenResponse = await request(server)
+            .post("/api/url/shorten")
+            .send({ longUrl: "https://example.com" });
+
+        // const shortId = shortenResponse.body.shortUrl.split("/").pop();
+
+        const redirectResponse = await request(server).get(`/api/url/random`);
+
+        expect(redirectResponse.status).toBe(404);
+        expect(redirectResponse.body).toHaveProperty("error");
+        expect(redirectResponse.body.error).toBe("Short URL not found");
     });
 });
