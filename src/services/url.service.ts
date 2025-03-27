@@ -13,7 +13,7 @@ class URLService {
 
     }
     async shortenURL(longUrl: string): Promise<string> {
-        const shortCode = generateShortCode();
+        const shortCode = await generateShortCode();
         await this.urlRepository.saveURL(shortCode, longUrl);
         return `${this.config.BASE_URL}/api/url/${shortCode}`;
     }

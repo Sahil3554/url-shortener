@@ -17,6 +17,10 @@ class RedisConnector {
     getRedis() {
         return this.redis
     }
+    disconnect() {
+        this.redis.quit()
+        console.log("🔴 Redis Disconnected")
+    };
 
 }
 export default RedisConnector;

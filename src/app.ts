@@ -15,12 +15,16 @@ class App {
     private urlService: URLService
     private urlController: URLController
     private config: typeof configuration
-    redisConnector: RedisConnector;
+    private redisConnector: RedisConnector;
+    private server: any;
 
     constructor(config: typeof configuration) {
         this.config = config
 
 
+    }
+    getExpressApp() {
+        return this.expressApp;
     }
     setup() {
         this.expressApp.use(cors());
@@ -32,6 +36,7 @@ class App {
         this.urlService = new URLService(this.config, this.urlRepository);
         this.urlController = new URLController(this.router, this.urlService);
         this.urlController.setRoutes();
+        this.setupRoutes();
     }
     setupRoutes() {
         this.expressApp.get("/health", (req, res) => {
@@ -41,8 +46,18 @@ class App {
         this.expressApp.use("/api/url", this.urlController.getRouter());
     }
     startServer() {
-        this.expressApp.listen(this.config.PORT, () => console.log(`🚀 Server running on port ${this.config.PORT}`));
+        this.server = this.expressApp.listen(this.config.PORT, () => console.log(`🚀 Server running on port ${this.config.PORT}`));
 
+    }
+
+    closeServer() {
+        if (this.server) {
+            this.server.close(() => {
+                console.log("🛑 Server closed successfully.");
+                this.redisConnector.disconnect(); // Close Redis connection
+                process.exit(0);
+            });
+        }
     }
 
 }
