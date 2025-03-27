@@ -15,7 +15,7 @@ class URLController {
     }
     setRoutes() {
         this.router.post("/shorten", this.shortenURL);
-        this.router.get("/:shortId", this.redirect);
+        this.router.get("/:shortCode", this.redirect);
     }
     shortenURL = async (req: Request, res: Response): Promise<any> => {
         const { longUrl } = req.body;
