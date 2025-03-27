@@ -8,7 +8,7 @@ describe("App API Tests", () => {
 
     beforeAll(() => {
         appInstance = new App(configuration);
-        appInstance.setup();
+        appInstance.setup(true);
         server = appInstance.getExpressApp();
     });
 

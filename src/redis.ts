@@ -6,9 +6,14 @@ class RedisConnector {
     private config: typeof Config
 
     private redis: Redis
-    constructor(config: typeof Config) {
+    constructor(config: typeof Config, useMock: boolean = false) {
         this.config = config;
-        this.redis = new Redis(this.config.REDIS_URL);
+        if (useMock) {
+            const RedisMock = require("ioredis-mock");
+            this.redis = new RedisMock();
+        } else {
+            this.redis = new Redis(this.config.REDIS_URL);
+        }
     }
     connect() {
         this.redis.on("connect", () => console.log("🟢 Redis connected"));

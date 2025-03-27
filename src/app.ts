@@ -26,10 +26,10 @@ class App {
     getExpressApp() {
         return this.expressApp;
     }
-    setup() {
+    setup(useMock: boolean = false) {
         this.expressApp.use(cors());
         this.expressApp.use(express.json());
-        this.redisConnector = new RedisConnector(this.config);
+        this.redisConnector = new RedisConnector(this.config, useMock);
         this.redisConnector.connect()
         let redis = this.redisConnector.getRedis();
         this.urlRepository = new URLRepository(redis);
