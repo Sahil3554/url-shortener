@@ -26,6 +26,11 @@ class App {
     getExpressApp() {
         return this.expressApp;
     }
+
+    getRedisConnector() {
+        return this.redisConnector;
+    }
+
     setup(useMock: boolean = false) {
         this.expressApp.use(cors());
         this.expressApp.use(express.json());
@@ -55,7 +60,10 @@ class App {
             this.server.close(() => {
                 console.log("🛑 Server closed successfully.");
                 this.redisConnector.disconnect(); // Close Redis connection
-                process.exit(0);
+                // Prevent process.exit(0) from crashing Jest tests
+                if (process.env.NODE_ENV !== "test") {
+                    process.exit(0);
+                }
             });
         }
     }
