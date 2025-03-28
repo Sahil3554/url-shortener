@@ -30,10 +30,10 @@ describe("RedisConnector", () => {
         expect(RedisMock).toHaveBeenCalledTimes(1);
     });
 
-    // it("should use real ioredis when useMock is false", () => {
-    //     redisConnector = new RedisConnector(Config, false);
-    //     expect(Redis).toHaveBeenCalledTimes(1);
-    // });
+    it("should use real ioredis when useMock is false", () => {
+        redisConnector = new RedisConnector(Config, false);
+        expect(Redis).toHaveBeenCalledTimes(1);
+    });
 
     it("should setup event listeners on connect", () => {
         redisConnector = new RedisConnector(Config, true);

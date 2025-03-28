@@ -51,4 +51,39 @@ describe("App API Tests", () => {
             done();
         }, 500);
     });
+
+    // it("should call process.exit(0) when NODE_ENV is not 'test'", async () => {
+    //     const spyExit = jest.spyOn(process, "exit").mockImplementation(() => {
+    //         return undefined as never;
+    //         // throw new Error("process.exit called"); // Prevent Jest from exiting
+    //     });
+
+    //     process.env.NODE_ENV = "production"; // Simulate production environment
+    //     console.log(process.env.NODE_ENV);
+    //     appInstance.startServer();
+    //     appInstance.closeServer();
+    //     // expect(() => appInstance.closeServer()).toThrow("process.exit called");
+    //     expect(spyExit).toHaveBeenCalledWith(0); // Ensure process.exit(0) was called
+
+    //     spyExit.mockRestore(); // Restore original process.exit
+    // });
+
+    it("should NOT call process.exit(0) when NODE_ENV is 'test'", async () => {
+        const spyExit = jest.spyOn(process, "exit").mockImplementation(() => { return undefined as never; });
+
+        process.env.NODE_ENV = "test"; // Simulate test environment
+
+        appInstance.closeServer();
+
+        expect(spyExit).not.toHaveBeenCalled(); // process.exit(0) should NOT be called
+
+        spyExit.mockRestore(); // Restore process.exit
+    });
+    it("server should work fine when redis is not mocked", async () => {
+        let appInstance2 = new App(configuration);
+        appInstance2.setup();
+        const res = await request(server).get("/health");
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual({ status: "Working Fine!" });
+    });
 });
