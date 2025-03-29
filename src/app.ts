@@ -5,6 +5,8 @@ import URLService from "./services/url.service";
 import { URLRepository } from "./repositories/url.repository";
 import configuration from "./config/config";
 import RedisConnector from "./redis";
+import { PrismaClient } from "@prisma/client";
+import URLCache from "./cache/url.cache";
 
 
 class App {
@@ -17,6 +19,8 @@ class App {
     private config: typeof configuration
     private redisConnector: RedisConnector;
     private server: any;
+    private prisma: PrismaClient;
+    private urlCache: URLCache;
 
     constructor(config: typeof configuration) {
         this.config = config
@@ -37,8 +41,10 @@ class App {
         this.redisConnector = new RedisConnector(this.config, useMock);
         this.redisConnector.connect()
         let redis = this.redisConnector.getRedis();
-        this.urlRepository = new URLRepository(redis);
-        this.urlService = new URLService(this.config, this.urlRepository);
+        this.prisma = new PrismaClient();
+        this.urlRepository = new URLRepository(redis, this.prisma);
+        this.urlCache = new URLCache(redis);
+        this.urlService = new URLService(this.config, this.urlRepository, this.urlCache);
         this.urlController = new URLController(this.router, this.urlService);
         this.urlController.setRoutes();
         this.setupRoutes();

@@ -1,16 +1,26 @@
+import { Prisma, PrismaClient, Url } from "@prisma/client";
 import RedisConnector from "../redis";
 import redis from "../redis";
 import Redis from "ioredis";
 export class URLRepository {
     redis: Redis
-    constructor(redis: Redis) {
-        this.redis = redis
+    prisma: PrismaClient
+    constructor(redis: Redis, prisma: PrismaClient) {
+        this.redis = redis;
+        this.prisma = prisma;
     }
-    async saveURL(shortCode: string, longUrl: string): Promise<void> {
-        await this.redis.set(shortCode, longUrl, "EX", 86400); // Store with 24-hour expiry
+    async saveURL(shortUrl: string, longUrl: string) {
+        console.log("Database ...");
+
+        return await this.prisma.url.create({
+            data: { longUrl, shortUrl },
+        });
     }
 
-    async getURL(shortCode: string): Promise<string | null> {
-        return await this.redis.get(shortCode);
+    async getURL(shortUrl: string): Promise<Url | null> {
+        console.log("Database ...");
+        return await this.prisma.url.findUnique({
+            where: { shortUrl },
+        });
     }
 }
