@@ -27,11 +27,11 @@ class URLController {
 
     redirect = async (req: Request, res: Response): Promise<any> => {
         const { shortCode } = req.params;
-        const longUrl = await this.urlService.getOriginalURL(shortCode);
+        const url = await this.urlService.getOriginalURL(shortCode);
 
-        if (!longUrl) return res.status(404).json({ error: "Short URL not found" });
+        if (!url) return res.status(404).json({ error: "Short URL not found" });
 
-        res.redirect(longUrl);
+        res.redirect(url);
     }
 }
 export default URLController;

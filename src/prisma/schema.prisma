@@ -13,7 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model URL {
+model Url {
   id         String  @id @default(uuid())
   shortUrl   String  @unique
   longUrl    String
